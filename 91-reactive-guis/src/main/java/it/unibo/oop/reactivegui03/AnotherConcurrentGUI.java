@@ -64,9 +64,11 @@ public final class AnotherConcurrentGUI extends JFrame {
 
     private void stopCounting() {
         this.agent.stopCounting();
-        SwingUtilities.invokeLater(() -> AnotherConcurrentGUI.this.up.setEnabled(false));
-        SwingUtilities.invokeLater(() -> AnotherConcurrentGUI.this.down.setEnabled(false));
-        SwingUtilities.invokeLater(() -> AnotherConcurrentGUI.this.stop.setEnabled(false));
+        SwingUtilities.invokeLater(() -> {
+            AnotherConcurrentGUI.this.up.setEnabled(false);
+            AnotherConcurrentGUI.this.down.setEnabled(false);
+            AnotherConcurrentGUI.this.stop.setEnabled(false);
+        });
     }
 
     private class Agent implements Runnable {
@@ -99,9 +101,11 @@ public final class AnotherConcurrentGUI extends JFrame {
 
         public void stopCounting() {
             this.stop = true;
-            SwingUtilities.invokeLater(() -> AnotherConcurrentGUI.this.up.setEnabled(false));
-            SwingUtilities.invokeLater(() -> AnotherConcurrentGUI.this.down.setEnabled(false));
-            SwingUtilities.invokeLater(() -> AnotherConcurrentGUI.this.stop.setEnabled(false));
+            SwingUtilities.invokeLater(() -> {
+                AnotherConcurrentGUI.this.up.setEnabled(false);
+                AnotherConcurrentGUI.this.down.setEnabled(false);
+                AnotherConcurrentGUI.this.stop.setEnabled(false);
+            });
         }
     }
 }
