@@ -77,9 +77,11 @@ public final class ConcurrentGUI extends JFrame {
 
         public void stopCounting() {
             this.stop = true;
-            SwingUtilities.invokeLater(() -> ConcurrentGUI.this.up.setEnabled(false));
-            SwingUtilities.invokeLater(() -> ConcurrentGUI.this.down.setEnabled(false));
-            SwingUtilities.invokeLater(() -> ConcurrentGUI.this.stop.setEnabled(false));
+            SwingUtilities.invokeLater(() ->  {
+                ConcurrentGUI.this.up.setEnabled(false);
+                ConcurrentGUI.this.down.setEnabled(false);
+                ConcurrentGUI.this.stop.setEnabled(false);
+            });
         }
 
     }
