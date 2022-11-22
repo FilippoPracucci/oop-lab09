@@ -15,20 +15,21 @@ import javax.swing.SwingUtilities;
  */
 public final class ConcurrentGUI extends JFrame {
 
-    private static final long serialVersionUID  =1L;
+    private static final long serialVersionUID  = 1L;
     private static final double WIDTH_PERC = 0.2;
     private static final double HEIGHT_PERC = 0.1;
 
-    private final JFrame frame;
+    private final JFrame frame = new JFrame();
     private final JLabel display = new JLabel();
     private final JButton stop = new JButton("Stop");
     private final JButton up = new JButton("Up");
     private final JButton down = new JButton("Down");
-
+    /**
+     * Creates a new ConcurrentGUI.
+     */
     public ConcurrentGUI() {
-        this.frame = new JFrame();
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        this.frame.setSize((int) (screenSize.getWidth() * WIDTH_PERC), (int) (screenSize.getHeight() *HEIGHT_PERC));
+        this.frame.setSize((int) (screenSize.getWidth() * WIDTH_PERC), (int) (screenSize.getHeight() * HEIGHT_PERC));
         this.frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         final JPanel panel = new JPanel();
         panel.add(this.display);
@@ -45,7 +46,7 @@ public final class ConcurrentGUI extends JFrame {
         up.addActionListener((e) -> agent.changeState(false));
         down.addActionListener((e) -> agent.changeState(true));
     }
-        
+
     private class Agent implements Runnable {
 
         private volatile boolean stop;
@@ -65,7 +66,7 @@ public final class ConcurrentGUI extends JFrame {
                     }
                     Thread.sleep(100);
                 } catch (InvocationTargetException | InterruptedException e) {
-                    e.printStackTrace();
+                    e.printStackTrace(); //NOPMD: allowed for the exercise
                 }
             }
         }
