@@ -49,26 +49,18 @@ public final class AnotherConcurrentGUI extends JFrame {
         up.addActionListener((e) -> agent.changeState(false));
         down.addActionListener((e) -> agent.changeState(true));
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        new Thread(() -> {
                 try {
                     Thread.sleep(TimeUnit.SECONDS.toMillis(10));
                 } catch (InterruptedException e) {
                     e.printStackTrace(); //NOPMD: allowed for the exercise
                 }
-                AnotherConcurrentGUI.this.stopCounting();
-            }
-        }).start();
-    }
-
-    private void stopCounting() {
-        this.agent.stopCounting();
-        SwingUtilities.invokeLater(() -> {
-            AnotherConcurrentGUI.this.up.setEnabled(false);
-            AnotherConcurrentGUI.this.down.setEnabled(false);
-            AnotherConcurrentGUI.this.stop.setEnabled(false);
-        });
+                try {
+                    SwingUtilities.invokeAndWait(() -> AnotherConcurrentGUI.this.agent.stopCounting());
+                } catch (InvocationTargetException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
     }
 
     private class Agent implements Runnable {
