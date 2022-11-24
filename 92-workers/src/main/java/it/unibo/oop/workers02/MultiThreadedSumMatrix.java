@@ -46,16 +46,18 @@ public class MultiThreadedSumMatrix implements SumMatrix {
         /**
          * Convert matrix to list.
          * 
+         * @param matrix the matrix to convert
+         * 
          * @return the list of double converted from the matrix
          */
-        private List<Double> toList() {
+        private List<Double> toList(final double[][] matrix) {
             /*
              * Build a list of double
              */
             final List<Double> matrixlist = new ArrayList<>();
-            for (int i = this.startcolumn; i < (this.startcolumn + this.ncolumn - 1); i++)  {
-                for (int j = 0; j < this.matrix.length; j++) {
-                    matrixlist.add(this.matrix[i][j]);
+            for (int i = 0; i < matrix.length; i++) { //NOPMD: can't use a foreach because i need the index
+                for (int j = startcolumn; j < (startcolumn + ncolumn) && j < getColumn(matrix); j++)  {
+                    matrixlist.add(matrix[i][j]);
                 }
             }
             return matrixlist;
@@ -63,9 +65,9 @@ public class MultiThreadedSumMatrix implements SumMatrix {
 
         @Override
         public void run() {
-            final List<Double> matrixlist = toList();
+            final List<Double> matrixlist = toList(this.matrix);
             System.out.println(//NOPMD: println allowed for the exercise
-                "Working from column  " + this.startcolumn + "to column " + (this.startcolumn + this.ncolumn - 1)
+                "Working from column  " + this.startcolumn + " to column " + (this.startcolumn + this.ncolumn - 1)
             ); 
             for (final Double elem: matrixlist) {
                 this.res += elem;
@@ -89,12 +91,12 @@ public class MultiThreadedSumMatrix implements SumMatrix {
      */
     @Override
     public double sum(final double[][] matrix) {
-        final int size = getSize(matrix) % this.nthread + getSize(matrix) / this.nthread;
+        final int size = getColumn(matrix) % this.nthread + getColumn(matrix) / this.nthread;
         /*
          * Build a list of workers
          */
         final List<Worker> workers = new ArrayList<>(this.nthread);
-        for (int start = 0; start < getSize(matrix); start += size) {
+        for (int start = 0; start < getColumn(matrix); start += size) {
             workers.add(new Worker(matrix, start, size));
         }
         /*
@@ -113,7 +115,6 @@ public class MultiThreadedSumMatrix implements SumMatrix {
                 throw new IllegalStateException(e);
             }
         }
-
         return sum;
     }
 
@@ -121,12 +122,12 @@ public class MultiThreadedSumMatrix implements SumMatrix {
      * 
      * @param matrix the matrix to get the size
      * 
-     * @return the size of the matrix
+     * @return the number of columns of the matrix
      */
-    private int getSize(final double[][] matrix) {
+    private static int getColumn(final double[][] matrix) {
         /*
          * Assume that the matrix is square
          */
-        return matrix.length * matrix[0].length;
+        return matrix[0].length;
     }
 }
