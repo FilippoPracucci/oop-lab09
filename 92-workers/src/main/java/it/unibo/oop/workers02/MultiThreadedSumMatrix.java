@@ -20,10 +20,10 @@ public class MultiThreadedSumMatrix implements SumMatrix {
         this.nthread = nthread;
     }
 
-    private static class Worker extends Thread {
+    private static final class Worker extends Thread {
         private final double[][] matrix;
-        private final int startcolumn;
-        private final int ncolumn;
+        private final int startrow;
+        private final int nrow;
         private double res;
 
         /**
@@ -31,51 +31,32 @@ public class MultiThreadedSumMatrix implements SumMatrix {
          *
          * @param matrix
          *          the matrix to sum
-         * @param startcolumn
-         *          the initial column for this worker
-         * @param ncolumn
-         *          the no. of columns to sum up for this worker
+         * @param startrow
+         *          the initial row for this worker
+         * @param nrow
+         *          the no. of rows to sum up for this worker
          */
-        Worker(final double[][] matrix, final int startcolumn, final int ncolumn) {
+        private Worker(final double[][] matrix, final int startrow, final int nrow) {
             super();
-            this.matrix = matrix.clone();
-            this.startcolumn = startcolumn;
-            this.ncolumn = ncolumn;
-        }
-
-        /**
-         * Convert matrix to list.
-         * 
-         * @param matrix the matrix to convert
-         * 
-         * @return the list of double converted from the matrix
-         */
-        private List<Double> toList(final double[][] matrix) {
-            /*
-             * Build a list of double
-             */
-            final List<Double> matrixlist = new ArrayList<>();
-            for (int i = 0; i < matrix.length; i++) { //NOPMD: can't use a foreach because i need the index
-                for (int j = startcolumn; j < (startcolumn + ncolumn) && j < getColumn(matrix); j++)  {
-                    matrixlist.add(matrix[i][j]);
-                }
-            }
-            return matrixlist;
+            this.matrix = matrix;
+            this.startrow = startrow;
+            this.nrow = nrow;
         }
 
         @Override
         public void run() {
-            final List<Double> matrixlist = toList(this.matrix);
             System.out.println(//NOPMD: println allowed for the exercise
-                "Working from column  " + this.startcolumn + " to column " + (this.startcolumn + this.ncolumn - 1)
-            ); 
-            for (final Double elem: matrixlist) {
-                this.res += elem;
+                "Working from column  " + this.startrow + " to column " + (this.startrow + this.nrow - 1)
+            );
+            for (int i = this.startrow; i < this.matrix.length && i < (this.startrow + this.nrow); i++) {
+                for (final double num: this.matrix[i]) {
+                    this.res += num;
+                }
             }
         }
 
         /**
-         * Returns the result of summing up a part of the matrix, after converted it into a list of double.
+         * Returns the result of summing up a part of the matrix.
          * 
          * @return the sum of every element of the list
          */
@@ -91,12 +72,12 @@ public class MultiThreadedSumMatrix implements SumMatrix {
      */
     @Override
     public double sum(final double[][] matrix) {
-        final int size = getColumn(matrix) % this.nthread + getColumn(matrix) / this.nthread;
+        final int size = getRows(matrix) % this.nthread + getRows(matrix) / this.nthread;
         /*
          * Build a list of workers
          */
         final List<Worker> workers = new ArrayList<>(this.nthread);
-        for (int start = 0; start < getColumn(matrix); start += size) {
+        for (int start = 0; start < getRows(matrix); start += size) {
             workers.add(new Worker(matrix, start, size));
         }
         /*
@@ -122,12 +103,9 @@ public class MultiThreadedSumMatrix implements SumMatrix {
      * 
      * @param matrix the matrix to get the size
      * 
-     * @return the number of columns of the matrix
+     * @return the number of rows of the matrix
      */
-    private static int getColumn(final double[][] matrix) {
-        /*
-         * Assume that the matrix is square
-         */
-        return matrix[0].length;
+    private static int getRows(final double[][] matrix) {
+        return matrix.length;
     }
 }
