@@ -48,7 +48,7 @@ public class MultiThreadedSumMatrix implements SumMatrix {
             System.out.println(//NOPMD: println allowed for the exercise
                 "Working from column  " + this.startrow + " to column " + (this.startrow + this.nrow - 1)
             );
-            for (int i = this.startrow; i < this.matrix.length && i < (this.startrow + this.nrow); i++) {
+            for (int i = this.startrow; i < getRows(this.matrix) && i < (this.startrow + this.nrow); i++) {
                 for (final double num: this.matrix[i]) {
                     this.res += num;
                 }
@@ -83,7 +83,7 @@ public class MultiThreadedSumMatrix implements SumMatrix {
         /*
          * Start them
          */
-        for (final Worker w: workers) {
+        for (final Thread w: workers) {
             w.start();
         }
 
